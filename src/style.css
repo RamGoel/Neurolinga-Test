@@ -3,7 +3,9 @@
   font-family: Poppins;
 }
 
-p,button,input {
+p,
+button,
+input {
   font-size: 13px !important;
 }
 
@@ -24,4 +26,8 @@ h-group {
 .customerDetails {
   font-size: 13px;
   justify-content: space-between;
+}
+
+.no-decor {
+  text-decoration: none;
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Link } from 'react-router-dom';
 
 export default function CustomerInfoForm() {
   return (
@@ -30,8 +31,11 @@ export default function CustomerInfoForm() {
           <input type="checkbox" />
           <span className="mx-2 my-0">Save for Future Orders </span>
         </div>
-
-        <button className="btn btn-primary w-100 my-2">Continue</button>
+        <Link to="/confirm">
+          <button className="btn btn-primary w-100 mx-auto my-2">
+            Continue
+          </button>
+        </Link>
       </form>
     </div>
   );

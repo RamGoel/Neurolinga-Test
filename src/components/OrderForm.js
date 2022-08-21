@@ -1,5 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Link } from 'react-router-dom';
 
 export default function OrderForm() {
   return (
@@ -16,8 +17,9 @@ export default function OrderForm() {
         <input type="text" className="form-control my-2" placeholder="Serial Number" />
         <input type="text" className="form-control my-2" placeholder="Customer Phone Number" />
 
-        <button className="btn btn-primary w-100">Continue</button>
-
+        <Link to="/customerInfo">
+        <button className="btn btn-primary w-100 mx-auto my-2">Continue</button>
+      </Link>{' '}
       </form>
     </div>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Link } from 'react-router-dom';
 
 export default function Home() {
   return (
@@ -38,13 +39,23 @@ export default function Home() {
       </div>
 
       <div className="">
-        <button className="btn btn-primary w-75 mx-auto my-2">New Order</button>
-        <button className="btn btn-primary w-75 mx-auto my-2">
-          View All Orders
-        </button>
-        <button className="btn btn-primary w-75 mx-auto my-2">
-          Store Profile
-        </button>
+        <Link to="/orderForm">
+          <button className="btn btn-primary w-75 mx-auto my-2">
+            New Order
+          </button>
+        </Link>
+        <Link to="/orderList">
+          <button className="btn btn-primary w-75 mx-auto my-2">
+            View All Orders
+          </button>
+        </Link>
+        <Link to="/storeProfile">
+          <button className="btn btn-primary w-75 mx-auto my-2">
+            Store Profile
+          </button>
+        </Link>
+
+       
       </div>
     </div>
   );

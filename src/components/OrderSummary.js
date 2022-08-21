@@ -1,6 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import { Link } from 'react-router-dom';
 export default function OrderSummary(props) {
   return (
     <div className="container bg-white py-2">
@@ -84,8 +84,16 @@ export default function OrderSummary(props) {
         </div>
       </div>
       <div className="btn-group w-100">
-        <button className="btn btn-primary w-100">Print Slip</button>
-        <button className="btn border w-100">Go Back</button>
+        <button className="btn btn-primary  mx-auto my-2">
+          <Link to="/orderForm" className="text-light no-decor">
+            Print Slip
+          </Link>{' '}
+        </button>
+        <button className="btn border  mx-auto my-2">
+          <Link to="/OrderList" className="text-dark no-decor">
+            Go Back
+          </Link>{' '}
+        </button>
       </div>{' '}
     </div>
   );

@@ -17,7 +17,7 @@ export default function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/orderConfirm" element={<OrderConfirm />} />
         <Route path="/orderList" element={<OrderList />} />
-        <Route path="/orderSummary" element={<OrderSummary />} />
+        <Route path="/orderSummary" element={<OrderSummary data={} />} />
         <Route path="/orderForm" element={<OrderForm />} />
         <Route path="/customerInfo" element={<CustomerInfoForm />} />
         <Route path="/confirm" element={<Confirmation />} />

@@ -2,20 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { onValue, ref, db } from '../firebase';
 export default function OrderForm() {
-  const [storeType, setStoreType] = useState('');
-  const [catoList, setCatoList] = useState({});
-  const [cato, setCato] = useState('Select Product Category');
-  const storeId = '2768234';
+  const [store, setStore] = useState({ id: '', type: '' });
+  const [products, setProducts] = useState({ 'Mi TV': [] });
+  const [item, setItem] = useState([
+    { name: 'Select Product', colors: [], variants: [] },
+  ]);
+  const storeMiId = '2768234';
   useEffect(() => {
     const starCountRef = ref(db, 'Stores/');
     onValue(starCountRef, (snapshot) => {
       const data = snapshot.val();
-      setStoreType(`${data[storeId].type} - #${data[storeId].id} `);
+      setStore({ id: data[storeMiId].id, type: data[storeMiId].type });
     });
-    const catoRef = ref(db, 'Products/');
-    onValue(catoRef, (snapshot) => {
-      const data = snapshot.val();
-      setCatoList(data.categories);
+    const itemsRef = ref(db, 'Products/');
+    onValue(itemsRef, (snapshot) => {
+      const data = snapshot.val().items;
+      setProducts(data);
+      console.log(data);
     });
   }, ['']);
   return (
@@ -25,74 +28,89 @@ export default function OrderForm() {
         <input
           type="text"
           className="form-control my-2"
-          placeholder="Select Store Type"
-          value={storeType}
+          value={storeMiId.length > 4 ? store.type : 'Select Store Type'}
           readOnly="true"
         />
-        <div className="dropdown ">
-          <button
-            className="btn btn-secondary dropdown-toggle"
-            type="button"
-            id="dropdownMenuButton"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
-            {cato}
-          </button>
-          <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            {Object.values(catoList).map((elem) => {
-              return (
-                <p className="dropdown-item" onClick={() => setCato(elem)}>
-                  {elem}
-                </p>
-              );
-            })}
-          </div>
-        </div>
         <input
           type="text"
           className="form-control my-2"
-          placeholder="Product ID (Machine Type)"
+          value={storeMiId.length > 4 ? store.id : 'Enter Operator Id'}
+          readOnly
         />
-        <div className="dropdown ">
-          <button
-            className="btn btn-secondary dropdown-toggle"
-            type="button"
-            id="dropdownMenuButton"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
-            Delivery Mode
-          </button>
-          <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            
-                <p className="dropdown-item" onClick={() => setCato(elem)}>
-                  Home Delivery
-                </p>
-                <p className="dropdown-item" onClick={() => setCato(elem)}>
-                  TakeAway
-                </p>
-            
-          </div>
-        </div>
+        <select className="w-100 form-control">
+          {Object.keys(products).map((elem) => {
+            return (
+              <option
+                className="dropdown-item"
+                onClick={function () {
+                  console.log(products[elem]);
+                }}
+              >
+                {elem}
+              </option>
+            );
+          })}
+        </select>
+        <select className="w-100 form-control my-2">
+          {item.map((elem) => {
+            return (
+              <option className="dropdown-i" onClick={() => setItem(elem)}>
+                {elem.name}
+              </option>
+            );
+          })}
+        </select>
         <input
           type="text"
           className="form-control my-2"
-          placeholder="Delivery Address (If Home Delivery)"
-        />
-        <input type="text" className="form-control my-2" placeholder="Color" />
-        <input
-          type="text"
-          className="form-control my-2"
-          placeholder="Size / Variant"
+          placeholder="Product ID"
         />
         <input
           type="text"
           className="form-control my-2"
           placeholder="Serial Number"
         />
+        <select className="w-100 form-control">
+          <option
+            className="dropdown-item"
+            onClick={() => setData({ deliveryMode: 'Home Delivery' })}
+          >
+            Home Delivery
+          </option>
+          <option
+            className="dropdown-item"
+            onClick={() => setData({ deliveryMode: 'Store Delivery' })}
+          >
+            In-store Delivery
+          </option>
+        </select>
+        <input
+          type="text"
+          className="form-control my-2"
+          placeholder="Delivery Address (If Home Delivery)"
+        />
+        <select className="w-100 form-control">
+          {/* {item.colors.map((elem) => {
+            return (
+              <option className="dropdown-item" onClick={() => setCato(elem)}>
+                {elem}
+              </option>
+            );
+          })} */}
+        </select>{' '}
+        <select className="w-100 form-control my-2">
+          {/* {item.variants.map((elem) => {
+            return (
+              <option
+                className="dropdown-item"
+                id=""
+                onClick={() => setCato(elem)}
+              >
+                {elem}
+              </option>
+            );
+          })} */}
+        </select>{' '}
         <input
           type="text"
           className="form-control my-2"

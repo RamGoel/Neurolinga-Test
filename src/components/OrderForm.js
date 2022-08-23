@@ -11,7 +11,7 @@ export default function OrderForm() {
     id: '',
   });
   const [loaded, setLoaded] = useState(0);
-  const [formData, setData] = useState({});
+  const [formData, setData] = useState({ deliveryMode: '' });
   const storeMiId = '2768234';
   useEffect(() => {
     const starCountRef = ref(db, 'Stores/');
@@ -27,9 +27,7 @@ export default function OrderForm() {
     });
   }, ['']);
 
-  useEffect(()=>{
-    
-  })
+  useEffect(() => {});
 
   return (
     <div className="container">
@@ -101,15 +99,11 @@ export default function OrderForm() {
             In-store Delivery
           </option>
         </select>
-        {formData.deliveryMode == 'Home Delivery' ? (
-          <input
-            type="text"
-            className="form-control my-2"
-            placeholder="Delivery Address (If Home Delivery)"
-          />
-        ) : (
-          ''
-        )}
+        <input
+          type="text"
+          className="form-control my-2"
+          placeholder="Delivery Address (If Home Delivery)"
+        />
         <select className="w-100 form-control">
           {bought.colors.map((elem) => {
             return (

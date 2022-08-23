@@ -17,7 +17,7 @@ export default function OrderForm() {
     const itemsRef = ref(db, 'Products/');
     onValue(itemsRef, (snapshot) => {
       const data = snapshot.val().items;
-      setProducts(data);
+      setProducts(data)
       console.log(data);
     });
   }, ['']);

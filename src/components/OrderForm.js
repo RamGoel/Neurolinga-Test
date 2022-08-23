@@ -3,10 +3,15 @@ import { Link } from 'react-router-dom';
 import { onValue, ref, db } from '../firebase';
 export default function OrderForm() {
   const [store, setStore] = useState({ id: '', type: '' });
-  const [products, setProducts] = useState({ 'Mi TV': [] });
-  const [item, setItem] = useState([
-    { name: 'Select Product', colors: [], variants: [] },
-  ]);
+  const [products, setProducts] = useState({ 'Select Product Category': [] });
+  const [item, setItem] = useState([{ name: 'Select Product' }]);
+  const [bought, setBought] = useState({
+    colors: ['Select Color'],
+    variants: ['Select Variant'],
+    id: '',
+  });
+  const [loaded, setLoaded] = useState(0);
+  const [formData, setData] = useState({});
   const storeMiId = '2768234';
   useEffect(() => {
     const starCountRef = ref(db, 'Stores/');
@@ -17,10 +22,15 @@ export default function OrderForm() {
     const itemsRef = ref(db, 'Products/');
     onValue(itemsRef, (snapshot) => {
       const data = snapshot.val().items;
-      setProducts(data)
+      setProducts(data);
       console.log(data);
     });
   }, ['']);
+
+  useEffect(()=>{
+    
+  })
+
   return (
     <div className="container">
       <form>
@@ -37,43 +47,50 @@ export default function OrderForm() {
           value={storeMiId.length > 4 ? store.id : 'Enter Operator Id'}
           readOnly
         />
-        <select className="w-100 form-control">
-          {Object.keys(products).map((elem) => {
-            return (
-              <option
-                className="dropdown-item"
-                onClick={function () {
-                  console.log(products[elem]);
-                }}
-              >
-                {elem}
-              </option>
-            );
-          })}
+        <select
+          className="w-100 form-control"
+          onChange={(e) => setItem(products[e.target.value])}
+          onClick={() => setLoaded(1)}
+        >
+          {loaded ? (
+            Object.keys(products).map((elem) => {
+              return <option className="dropdown-item">{elem}</option>;
+            })
+          ) : (
+            <option className="dropdown-item">Select Product Category</option>
+          )}
         </select>
-        <select className="w-100 form-control my-2">
-          {item.map((elem) => {
-            return (
-              <option className="dropdown-i" onClick={() => setItem(elem)}>
-                {elem.name}
-              </option>
+        <select
+          className="w-100 form-control my-2"
+          onChange={(e) => {
+            console.log(e.target.value);
+            setBought(
+              item.filter((element) => e.target.value == element.name)[0]
             );
+          }}
+        >
+          {item.map((elem) => {
+            return <option className="dropdown-item">{elem.name}</option>;
           })}
         </select>
         <input
           type="text"
           className="form-control my-2"
           placeholder="Product ID"
+          readOnly
+          value={bought.id}
         />
         <input
           type="text"
           className="form-control my-2"
           placeholder="Serial Number"
         />
-        <select className="w-100 form-control">
+        <select className="w-100 form-control my-2">
           <option
             className="dropdown-item"
-            onClick={() => setData({ deliveryMode: 'Home Delivery' })}
+            onClick={() => {
+              setData({ deliveryMode: 'Home Delivery' });
+            }}
           >
             Home Delivery
           </option>
@@ -84,22 +101,26 @@ export default function OrderForm() {
             In-store Delivery
           </option>
         </select>
-        <input
-          type="text"
-          className="form-control my-2"
-          placeholder="Delivery Address (If Home Delivery)"
-        />
+        {formData.deliveryMode == 'Home Delivery' ? (
+          <input
+            type="text"
+            className="form-control my-2"
+            placeholder="Delivery Address (If Home Delivery)"
+          />
+        ) : (
+          ''
+        )}
         <select className="w-100 form-control">
-          {/* {item.colors.map((elem) => {
+          {bought.colors.map((elem) => {
             return (
               <option className="dropdown-item" onClick={() => setCato(elem)}>
                 {elem}
               </option>
             );
-          })} */}
+          })}
         </select>{' '}
         <select className="w-100 form-control my-2">
-          {/* {item.variants.map((elem) => {
+          {bought.variants.map((elem) => {
             return (
               <option
                 className="dropdown-item"
@@ -109,7 +130,7 @@ export default function OrderForm() {
                 {elem}
               </option>
             );
-          })} */}
+          })}
         </select>{' '}
         <input
           type="text"

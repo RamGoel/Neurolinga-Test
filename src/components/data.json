@@ -1,0 +1,32 @@
+[
+  {
+    "id": "245672",
+    "name": "Ashok Singh",
+    "photo": "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+    "isAdmin": true
+  },
+  {
+    "id": "245673",
+    "name": "Ankit Singh",
+    "photo": "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+    "isAdmin": false
+  },
+  {
+    "id": "245674",
+    "name": "Anmit Garg",
+    "photo": "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+    "isAdmin": false
+  },
+  {
+    "id": "245675",
+    "name": "Ashu Singh",
+    "photo": "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+    "isAdmin": false
+  },
+  {
+    "id": "245676",
+    "name": "Aslam khan",
+    "photo": "https://cdn-icons-png.flaticon.com/512/149/149071.png",
+    "isAdmin": false
+  }
+]

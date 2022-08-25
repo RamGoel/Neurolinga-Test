@@ -2,32 +2,32 @@
 * {
   font-family: Poppins;
 }
+/* 
+@media screen and (min-width: 768px) {
+  body {
+    overflow: hidden;
+    width: 25vw;
+    margin: auto;
+    height: 100vh;
+  }
+} */
 
-p,
-button,
+.downBox {
+  width: 90%;
+  margin: auto;
+  padding: 10px;
+}
 input {
-  font-size: 13px !important;
+  outline: none !important;
+  border: none !important;
 }
 
-h-group {
-  font-size: 17px !important;
+#messagesBox {
+  height: 450px;
+  width: 100%;
+  margin: auto;
 }
 
-.alert {
-  font-size: 10px;
-  margin: 0;
-  padding: 0px 10px;
-  justify-content: space-between;
-}
-.list-none {
-  list-style-type: none;
-}
-
-.customerDetails {
-  font-size: 13px;
-  justify-content: space-between;
-}
-
-.no-decor {
-  text-decoration: none;
+.downBox {
+  height: 100vh !important;
 }

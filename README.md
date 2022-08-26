@@ -14,6 +14,5 @@
 
 Admin ID - 245672
 Users ID - 245673,245674,245676
-
-
+Routes - /admin for admin ,/ for user
 Open Issues if you Find, Lets make it working.🚀

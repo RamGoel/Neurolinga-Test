@@ -2,7 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { ref, db, onValue, onChildAdded } from '../firebase';
 
 const MessageComponent = (props) => {
-  return <p className="messageBody">Admin : {props.value}</p>;
+  return (
+    <div className="messageBody">
+      <p className="messageText">Admin : {props.value}</p>
+      <sup>{props.time}</sup>
+    </div>
+  );
 };
 export default function User(props) {
   const fetchChat = ref(db, 'Messages/');
@@ -72,15 +77,15 @@ export default function User(props) {
             </button>
           </div>
         </div>
-        
+
         <div className="d-flex align-items-center justify-content-center">
-        <button
-          onClick={() => {
-            setNewCount(0);
-          }}
-        >
-          Mark as Read
-        </button>
+          <button
+            onClick={() => {
+              setNewCount(0);
+            }}
+          >
+            Mark as Read
+          </button>
           <button className="btn btn-white border-0 hover-zoom p-0 px-2 mx-2 my-auto">
             <img
               src="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-ios7-bell-512.png"
@@ -101,7 +106,12 @@ export default function User(props) {
               {activeUserId
                 ? messages.map((elem) => {
                     if (elem.id == activeUserId) {
-                      return <MessageComponent value={elem.message} />;
+                      return (
+                        <MessageComponent
+                          value={elem.message}
+                          time={elem.time}
+                        />
+                      );
                     }
                   })
                 : 'Enter Your User Id to View Chats'}

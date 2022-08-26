@@ -4,8 +4,8 @@ import { sendMessage, fetchMessages } from '../firebase';
 
 const MessageComponent = (props) => {
   return (
-    <div>
-      <p className="messageBody">Admin : {props.value}</p>
+    <div className="messageBody">
+      <p className="messageText">Admin : {props.value}</p>
       <sup>{props.time}</sup>
     </div>
   );
@@ -108,7 +108,6 @@ function Admin(props) {
                   <MessageComponent value={elem.message} time={elem.time} />
                 );
               })}
-              
             </div>
             <div className="d-flex align-items-center justify-content-between w-100  bg-light p-1 ">
               <input

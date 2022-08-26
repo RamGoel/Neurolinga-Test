@@ -11,15 +11,6 @@ import {
   getDatabase,
   onChildAdded,
 } from 'firebase/database';
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp,
-  onSnapshot,
-  query,
-  orderBy,
-} from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: 'AIzaSyCHJkzwvxGMOtdbVY7xDre3963Gpikdkyk',
@@ -34,7 +25,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-var count = 0;
+var count = 9;
+
+window.onload = () => {
+  count = localStorage.getItem('fireBase Counter') || 0;
+};
+window.onbeforeunload = () => {
+  localStorage.setItem('firebaseCounter', count);
+};
 async function sendMessage(user, text) {
   if (user) {
     try {

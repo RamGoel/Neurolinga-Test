@@ -2,15 +2,22 @@
 * {
   font-family: Poppins;
 }
-/* 
-@media screen and (min-width: 768px) {
-  body {
-    overflow: hidden;
-    width: 25vw;
-    margin: auto;
-    height: 100vh;
-  }
-} */
+
+.userCard:hover {
+  cursor: pointer;
+  opacity: 70%;
+}
+
+.messageBody {
+  padding: 5px 10px;
+  margin: 10px;
+  left: 50%;
+  text-align: right;
+  background-color: purple;
+  border-radius: 5px;
+  color: white;
+  width: max-content;
+}
 
 .downBox {
   width: 90%;
@@ -26,6 +33,7 @@ input {
   height: 450px;
   width: 100%;
   margin: auto;
+  overflow-y: scroll;
 }
 
 .downBox {

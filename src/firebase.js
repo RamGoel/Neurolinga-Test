@@ -2,12 +2,9 @@
 import { initializeApp, firebase } from 'firebase/app';
 
 import {
-  db,
-  get,
   ref,
   set,
   onValue,
-  push,
   getDatabase,
   onChildAdded,
 } from 'firebase/database';

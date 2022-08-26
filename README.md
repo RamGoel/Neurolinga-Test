@@ -12,7 +12,12 @@
 
 ## Required Details -
 
-Admin ID - 245672
-Users ID - 245673,245674,245676
-Routes - /admin for admin ,/ for user
+Admin ID - 245672 <br>
+Users ID - 245673,245674,245676 <br>
+
+Routes -  <br>
+/admin for admin <br>
+/ for user <br>
+
+
 Open Issues if you Find, Lets make it working.🚀

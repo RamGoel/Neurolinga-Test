@@ -3,6 +3,7 @@ import { Pressable, Text, View, TextInput, ScrollView } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { makeid } from "../res/constants";
 import styles from '../res/styles'
+import { saveLocal } from "./firebase";
 const StoreDataForm = ({ navigation, route }) => {
 
     const { user } = route.params

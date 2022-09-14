@@ -5,8 +5,7 @@ import { ScrollView, TextInput } from "react-native";
 import { fields } from '../res/data'
 import styles from "../res/styles";
 import { makeid } from "../res/constants";
-import { ref,db,onValue,set,dbF } from "./firebase";
-import { doc, getDoc } from "firebase/firestore";
+import { ref,db,onValue,set,dbF, saveLocal } from "./firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const OrderForm = ({ navigation, route }) => {
@@ -68,11 +67,16 @@ const OrderForm = ({ navigation, route }) => {
 
 
 
-  useEffect(() => {
+  useEffect(async() => {
+    async function fetch
     const productRef = ref(db, `Products/`)
     onValue(productRef, (snap) => {
       var data = snap.val()
       setProducts(data)
+      if(await AsyncStorage.getItem('XiBillerProducts')!=data){
+
+        saveLocal('XiBillerProducts',``)
+      }
     })
   }, [''])
 
@@ -269,7 +273,6 @@ const OrderForm = ({ navigation, route }) => {
               if (address.length>5) {
 
                 //Continue Order
-                const tempId = makeid(7)
 
                 const OrdersRef = ref(db, "Orders/");
                 onValue(OrdersRef, (snapshot) => {
@@ -300,7 +303,6 @@ const OrderForm = ({ navigation, route }) => {
 
             } else {
               //Continue Order
-              const tempId = makeid(7)
 
               const OrdersRef = ref(db, "Orders/");
               onValue(OrdersRef, (snapshot) => {
@@ -312,10 +314,8 @@ const OrderForm = ({ navigation, route }) => {
                   console.warn(prevUser)
                   if (prevUser) {
                     setPassData({ ...passData, commMode: prevUser.commMode, cname: prevUser.cname, cmail: prevUser.cmail })
-                    set(ref(db, `Cart/${tempId}`), { ...passData, screen: "OrderConfirm" })
                     navigation.navigate("OrderConfirm", { data: passData });
                   } else {
-                    set(ref(db, `Cart/${tempId}`), { ...passData, screen: "CustomerDetails" })
                     navigation.navigate("CustomerDetails", { data: passData });
 
                   }

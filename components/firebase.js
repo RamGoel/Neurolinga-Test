@@ -7,7 +7,22 @@ import {
 } from 'firebase/auth';
 import { getDatabase, ref, onValue, set } from 'firebase/database';
 import { getFirestore } from 'firebase/firestore';
-// import { collection, doc, getDoc, getDocs, } from "firebase/firestore";
+
+
+async function saveLocal(key, data) {
+    try {
+        await AsyncStorage.setItem(key, JSON.stringify(data))
+        return true;
+    } catch (e) {
+        alert(JSON.stringify(e))
+    }
+}
+
+async function getLocal(key) {
+    const data = await AsyncStorage.getItem(key)
+    return JSON.parse(data);
+
+}
 
 
 
@@ -28,6 +43,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
+
 const dbF = getFirestore(app)
 const auth = getAuth();
 
@@ -40,4 +57,4 @@ const auth = getAuth();
 
 
 
-export { ref, set, dbF, onAuthStateChanged, auth, db, onValue, signInWithEmailAndPassword }
+export {getLocal,saveLocal, ref, set, dbF, onAuthStateChanged, auth, db, onValue, signInWithEmailAndPassword }

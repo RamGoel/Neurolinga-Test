@@ -6,7 +6,12 @@ import { HomeInsightCard } from "./atoms";
 export default function Home({ navigation, route }) {
   const { data } = route.params
 
-
+//  "splash": {
+    //    "image": "./assets/splash.png",
+    //    "resizeMode": "contain",
+    //    "backgroundColor": "#ffffff"
+    //  },
+    
   return (
     <View style={styles.container}>
       <Text style={styles.pageHead}>Hi, {data.Name}</Text>

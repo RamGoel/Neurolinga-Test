@@ -1,109 +1,106 @@
 import {
   Text,
   View,
-  StyleSheet,
   TextInput,
-  Button,
-  Alert,
-  Image,
-  Platform,
+  Pressable,
+  ActivityIndicator
 } from "react-native";
-import { useState } from "react";
-import { signInWithEmailAndPassword ,onAuthStateChanged,auth } from "../firebase";
-import { fontSizeConstant } from "./res/constants";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import styles from '../res/styles'
+import { useEffect, useState } from "react";
+import { onValue, ref, db, auth, onAuthStateChanged, signInWithEmailAndPassword } from "./firebase";
+
 export default function Login({ navigation, route }) {
-  const [formData, setFormData] = useState({ email: "", password: "" });
 
-  const loginUser = (obj) => {
-    if (obj.email != "" && obj.password != "") {
 
-      signInWithEmailAndPassword(auth, obj.email, obj.password)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [showSpinner, setSpinner] = useState(true)
+
+
+  const loginUser = async (mail, pwd) => {
+    if (mail != "" && pwd != "") {
+      setSpinner(false)
+
+      signInWithEmailAndPassword(auth, mail, pwd)
         .then((user) => {
           onAuthStateChanged(auth, (user) => {
-            navigation.navigate("Home", formData);
+            const storeRef = ref(db, `Stores/`)
+            onValue(storeRef, (snap) => {
+              var data = snap.val();
+              data = Object.values(data).filter((elem) => elem.mail != mail)
+              if (data) {
+
+                navigation.navigate('Home', { data: data[0] });
+                setSpinner(true)
+              } else {
+                navigation.navigate('StoreDataForm', { user: { mail: mail, password: pwd } })
+                setSpinner(true)
+              }
+            })
           });
         })
         .catch((error) => {
-          {
-            alert(`User not found`);
-            navigation.navigate("Home", formData);
-
-          }
+          const v = error.message.split('/')
+          alert(v[v.length - 1])
+          setSpinner(true)
         });
+
+
     } else {
+
       alert("Please Enter E-mail or Password");
     }
 
   };
+
+  // useEffect(async () => {
+  //   if (await AsyncStorage.getItem('miStore') != null) {
+  //     var obj = JSON.parse(await AsyncStorage.getItem('miStore'))
+  //     navigation.navigate('Home', { data: obj })
+  //   }
+  // }, [''])
+
   return (
-    <View style={styles.container}>
-      <Image
-        style={styles.tinyLogo}
-        source={require('../assets/login.png')}
-      />
-      <Text style={styles.paragraph}>Login with Mi Account</Text>
-      <View>
-        <TextInput
-          style={styles.textInput}
-          placeholder="E-mail ID"
-          onChange={(e) => {
-            setFormData({ ...formData, email: e.target.value });
-          }}
-        />
-        <TextInput
-          style={styles.textInput}
-          placeholder="Password"
-          onChange={(e) => {
-            setFormData({ ...formData, password: e.target.value });
-          }}
-        />
+
+    (showSpinner) ? (
+      <View style={styles.container}>
+
+
+        <Text style={styles.paragraph}>Login with Mi Account</Text>
+
+        <View>
+          <TextInput
+            style={styles.textInput}
+            placeholder="E-mail ID"
+            value={email}
+            keyboardType="email-address"
+            onChangeText={setEmail}
+          />
+          <TextInput
+            style={styles.textInput}
+            value={password}
+            placeholder="Password"
+            secureTextEntry={true}
+            onChangeText={setPassword}
+          />
+
+
+        </View>
+
+        <Pressable style={styles.pressable} onPress={() => {
+          loginUser(email, password);
+        }}>
+          <Text style={styles.pressText}>Login</Text>
+        </Pressable>
+
       </View>
-      <Button
-        title="SUBMIT"
-        onPress={() => {
-          loginUser(formData);
-        }}
-      />
-      <Text style={styles.bottomLine}>Not Registered? Contact Us</Text>
+
+
+    ) : (<View style={{ height: '100%', justifyContent: 'center' }}>
+
+      <ActivityIndicator size="large" color="#808080" />
     </View>
-  );
+    )
+  )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: "center",
-    padding: 24,
-    fontSize:fontSizeConstant,
-    backgroundColor:'white',
-    height:'100%'
-
-  },
-  paragraph:{
-    fontSize:fontSizeConstant,
-    textAlign:'center',
-    fontWeight:'bold'
-  },
-  btn: {
-    marginBottom: 10,
-    marginTop: 10,
-    fontSize:fontSizeConstant
-  },
-  textInput: {
-    marginBottom: 10,
-    marginTop: 10,
-    padding: 15,
-    backgroundColor: "#f9f9f9",
-    borderRadius: 3,
-    fontSize:15
-  },
-  tinyLogo:{
-    height:250,
-    width:'100%'
-  },
-  bottomLine:{
-    marginTop:10,
-    textAlign:'center',
-
-
-  }
-});

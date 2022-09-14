@@ -1,54 +1,82 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
-import { Button, ScrollView, TextInput } from "react-native";
-import { db, ref, onValue } from "../firebase";
-import { fontSizeConstant } from "./res/constants";
+import { ScrollView, TextInput } from "react-native";
+import { fields } from '../res/data'
+import styles from "../res/styles";
+import { makeid } from "../res/constants";
+import { ref,db,onValue,set,dbF } from "./firebase";
+import { doc, getDoc } from "firebase/firestore";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const OrderForm = ({ navigation, route }) => {
-  const [formData, setData] = useState([]);
+
+  const { store } = route.params
+  const [address, setAddress] = useState('')
   const [products, setProducts] = useState([]);
+  const [formData, setData] = useState([
+    {
+      "dropName": "Product Type",
+      "label": "Mi Phones",
+      "value": "Mi Phones"
+    },
+    {
+      "dropName": "Product Type",
+      "label": "Mi TV",
+      "value": "Mi TV"
+    },
+    {
+      "dropName": "Product Type",
+      "label": "Mi Laptops",
+      "value": "Mi Laptops"
+    },
+    {
+      "dropName": "Product Type",
+      "label": "Mi Speakers",
+      "value": "Mi Speakers"
+    },
+    {
+      "dropName": "Product Type",
+      "label": "Mi Bands",
+      "value": "Mi Bands"
+    },
+    {
+      "dropName": "Delivery Mode",
+      "label": "Home Delivery",
+      "value": "Home Delivery"
+    },
+    {
+      "dropName": "Delivery Mode",
+      "label": "In-Store Delivery",
+      "value": "In-Store Delivery"
+    }
+  ])
   const [isHome, setIsHome] = useState(0);
   const [passData, setPassData] = useState({
-    "Operator Id": "",
-    "Store Type": "",
-    "Store Name": "",
+    "Operator Id": store.Id,
+    "Store Type": store.type,
+    "Store Name": store.Name,
     "Product Serial Number": "",
-    "Service Order Number":"",
+    "Service Order Number": "",
     "Product Type": "",
     "Choose Product": "",
-    Color:  "",
+    Color: "",
     Size: "",
     "Delivery Mode": "",
-    "Delivery Address": "",
     "Customer Contact Number": "",
   });
-  const fields = [
-    ["Operator Id", "input"],
-    ["Store Type", ""],
-    ["Store Name", "input"],
-    ["Product Serial Number", "input"],
-    ["Service Order Number", "input"],
-    ["Product Type", ""],
-    ["Choose Product", ""],
-    ["Color", ""],
-    ["Size", ""],
-    ["Delivery Mode", ""],
-    ["Delivery Address", "input"],
-    ["Customer Contact Number", "input"],
-  ];
+
+
 
   useEffect(() => {
-    const formDataRef = ref(db, "formData/");
-    onValue(formDataRef, (snapshot) => {
-      const data = snapshot.val();
-      setData(data);
-    });
-    const ProductsRef = ref(db, "Products/");
-    onValue(ProductsRef, (snapshot) => {
-      const data = snapshot.val();
-      setProducts(data);
-    });
-  }, [""]);
+    const productRef = ref(db, `Products/`)
+    onValue(productRef, (snap) => {
+      var data = snap.val()
+      setProducts(data)
+    })
+  }, [''])
+
+
 
   useEffect(() => {
     const filteredProducts = products.filter(
@@ -87,11 +115,11 @@ const OrderForm = ({ navigation, route }) => {
       chosenProduct[0].variants.map((elem) => {
         copyDropItems.push({ label: elem, value: elem, dropName: "Size" });
       });
-      const submitData={...passData}
-      submitData.subTotal=chosenProduct[0].price[0]
-      submitData.deliveryCharge=chosenProduct[0].price[1]
-      submitData.taxPercent=chosenProduct[0].price[2]
-      submitData.totalPrice=chosenProduct[0].price[3]
+      const submitData = { ...passData }
+      submitData.subTotal = chosenProduct[0].price[0]
+      submitData.deliveryCharge = chosenProduct[0].price[1]
+      submitData.taxPercent = chosenProduct[0].price[2]
+      submitData.totalPrice = chosenProduct[0].price[3]
 
       setPassData(submitData)
       setData(copyDropItems);
@@ -99,8 +127,7 @@ const OrderForm = ({ navigation, route }) => {
   }, [passData["Choose Product"]]);
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.pageHead}>Fill Order Details</Text>
+    <ScrollView style={styles.formContainer}>
       {fields.map((elem) => {
         if (elem[1] != "input") {
           var dropItems = formData.filter((obj) => obj.dropName == elem[0]);
@@ -132,114 +159,192 @@ const OrderForm = ({ navigation, route }) => {
                   setIsHome(0);
                 }
                 setPassData(obj);
-                console.log(passData);
               }}
             />
           );
         } else {
-          if (elem[0] == "Delivery Address") {
-            return isHome ? (
-              <TextInput
-                key={elem[0]}
-                value={passData[`${elem}`]}
-                style={styles.textInput}
-                placeholder={elem[0]}
-                onChangeText={(e) => {
-                  var obj = { ...passData };
-                  obj[`${elem[0]}`] = e;
-                  setPassData(obj);
-                }}
-              />
-            ) : (
-              <Text></Text>
-            );
+
+          if (elem[0] == "Operator Id") {
+            return <TextInput
+              key={elem[0]}
+              value={`${store.Id}`}
+              keyboardType={`${elem[2]}`}
+              style={styles.textInput}
+              placeholder={elem[0]}
+              editable={false}
+            />
           } else {
-            return (
-              <TextInput
-                key={elem[0]}
-                value={passData[`${elem}`]}
-                style={styles.textInput}
-                placeholder={elem[0]}
-                onChangeText={(e) => {
-                  var obj = { ...passData };
-                  obj[`${elem[0]}`] = e;
-                  setPassData(obj);
-                }}
-              />
-            );
+
+            if (elem[0] == "Delivery Address") {
+              return isHome ? (
+                <TextInput
+                  key={elem[0]}
+                  value={address}
+                  style={styles.textInput}
+                  placeholder={elem[0]}
+                  keyboardType={`${elem[2]}`}
+                  onChangeText={setAddress}
+                />
+              ) : (
+                null
+              );
+            } else {
+              return (
+                <TextInput
+                  key={elem[0]}
+                  value={passData[`${elem}`]}
+                  style={styles.textInput}
+                  keyboardType={`${elem[2]}`}
+                  placeholder={elem[0]}
+                  onChangeText={(e) => {
+                    var obj = { ...passData };
+                    obj[`${elem[0]}`] = e;
+                    setPassData(obj);
+                  }}
+                />
+              );
+            }
           }
         }
       })}
 
-      <Button
-        title="Continue"
-        onPress={() => {
+
+      <View style={{ flex: 1, flexDirection: 'row' }}>
+
+        <Pressable style={{ ...styles.pressable, flex: 1, marginRight: 5 }} onPress={() => {
+
+          //Checking if any field is empty
           var flag = 0;
           Object.keys(passData).map((elem) => {
             if (passData[`${elem}`] == "") {
               flag = 1;
-              alert(elem)
             }
           });
-          if (flag == 0) navigation.navigate("CustomerDetails",{data:passData});
+
+          if (flag == 0) {
+
+            //Add to Cart
+
+            if (passData["Delivery Mode"] == "Home Delivery") {
+
+              if (address.length>5) {
+
+                const tempId = makeid(7)
+                set(ref(db, `Cart/${tempId}`), { ...passData, 'Delivery Address': address, cartId: "tempId" })
+                alert("Added to Cart")
+              } else {
+                alert("Address Should Contain minimum 5 Characters")
+              }
+
+
+            } else {
+              const tempId = makeid(7)
+              set(ref(db, `Cart/${tempId}`), { ...passData, 'Delivery Address': address, cartId: "tempId" })
+              alert("Added to Cart")
+            }
+          }
           else alert("All Fields are Compulsory");
-        }}
-      />
+
+
+        }}>
+          <Text style={styles.pressText}>Add to Cart</Text>
+        </Pressable>
+
+
+        <Pressable style={{ ...styles.pressable, flex: 1, marginLeft: 5 }} onPress={() => {
+
+          //Check if Value Empty
+          var flag = 0;
+          Object.keys(passData).map((elem) => {
+            if (passData[`${elem}`] == "") {
+              flag = 1;
+            }
+          });
+
+          if (flag == 0) {
+
+
+            if (passData["Delivery Mode"] == "Home Delivery") {
+
+              if (address.length>5) {
+
+                //Continue Order
+                const tempId = makeid(7)
+
+                const OrdersRef = ref(db, "Orders/");
+                onValue(OrdersRef, (snapshot) => {
+                  const data = snapshot.val();
+                  console.log(data)
+                  if (data) {
+
+                    const prevUser = Object.values(data).find((elem) => elem["Customer Contact Number"] == passData["Customer Contact Number"])
+                    console.warn(prevUser)
+                    if (prevUser) {
+                      setPassData({ ...passData, commMode: prevUser.commMode, cname: prevUser.cname, cmail: prevUser.cmail })
+                      navigation.navigate("OrderConfirm", { data: passData });
+                    } else {
+                      navigation.navigate("CustomerDetails", { data: passData });
+
+                    }
+                  } else {
+
+                    navigation.navigate("CustomerDetails", { data: passData });
+
+                  }
+                });
+
+              } else {
+                alert("Address Should Contain minimum 5 Characters")
+              }
+
+
+            } else {
+              //Continue Order
+              const tempId = makeid(7)
+
+              const OrdersRef = ref(db, "Orders/");
+              onValue(OrdersRef, (snapshot) => {
+                const data = snapshot.val();
+                console.log(data)
+                if (data) {
+
+                  const prevUser = Object.values(data).find((elem) => elem["Customer Contact Number"] == passData["Customer Contact Number"])
+                  console.warn(prevUser)
+                  if (prevUser) {
+                    setPassData({ ...passData, commMode: prevUser.commMode, cname: prevUser.cname, cmail: prevUser.cmail })
+                    set(ref(db, `Cart/${tempId}`), { ...passData, screen: "OrderConfirm" })
+                    navigation.navigate("OrderConfirm", { data: passData });
+                  } else {
+                    set(ref(db, `Cart/${tempId}`), { ...passData, screen: "CustomerDetails" })
+                    navigation.navigate("CustomerDetails", { data: passData });
+
+                  }
+                } else {
+
+                  navigation.navigate("CustomerDetails", { data: passData });
+
+                }
+              });
+
+            }
+
+
+
+
+
+          }
+          else alert("All Fields are Compulsory");
+
+
+        }}>
+          <Text style={styles.pressText}>Continue</Text>
+        </Pressable>
+      </View>
+
     </ScrollView>
   );
-  
+
 };
 
 export default OrderForm;
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "white",
-    padding: 16,
-  },
-  pageHead: {
-    fontSize:fontSizeConstant,
-    textAlign: "center",
-  },
-  dropdown: {
-    height: 50,
-    borderColor: "gray",
-    borderWidth: 0.5,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-    margin: 10,
-  },
-  icon: {
-    marginRight: 5,
-  },
-  label: {
-    position: "absolute",
-    backgroundColor: "white",
-    left: 22,
-    top: 8,
-    zIndex: 999,
-    paddingHorizontal: 8,
-    fontSize:fontSizeConstant
-  },
-  placeholderStyle: {
-    fontSize:fontSizeConstant
-  },
-  selectedTextStyle: {
-    fontSize:fontSizeConstant
-  },
-  iconStyle: {
-    width: 20,
-    height: 20,
-  },
-  inputSearchStyle: {
-    height: 40,
-    fontSize:fontSizeConstant
-  },
-  textInput: {
-    margin: 10,
-    padding: 10,
-    backgroundColor: "white",
-    borderRadius: 10,
-    border: "1px solid black",
-  },
-});

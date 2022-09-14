@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { Text, View, StyleSheet, Image, Button } from "react-native";
-import { fontSizeConstant } from "./res/constants";
+import { makeid } from "../res/constants";
 
-
+import styles from "../res/styles";
 export default function StoreProfile({ navigation, route }) {
+    const {user}=route.params
     const [data, setData] = useState(
         {
-            "Store Name": "AV Enterprises",
-            "Store Type": "Mi Stores",
-            "Mi Account Id": "27898292829",
-            "Operator Id": "0121999",
-            "Address": "Lal Kuan Ghaziabad",
-            "City": "Ghaziabad",
-            "State": "Uttar Pradesh"
+            "Store Name": user.Name,
+            "Store Type": user.type,
+            "Mi Account Id": user.email,
+            "Operator Id": user.Id,
+            "Address": user.Street,
+            "City": user.City,
+            "State": user.State
     
         }
     )
@@ -22,7 +23,7 @@ export default function StoreProfile({ navigation, route }) {
 
                 <Image
                     style={styles.tinyLogo}
-                    source={require('../assets/splash.png')}
+                    source="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8dXNlcnxlbnwwfHwwfHw%3D&w=1000&q=80"
                 />
             </View>
 
@@ -30,7 +31,7 @@ export default function StoreProfile({ navigation, route }) {
                 Object.keys(data).map((elem) => {
                     return (
 
-                        <View style={styles.listBox}>
+                        <View style={styles.listBox} key={makeid(5)}>
                             <Text style={styles.listItem}>
                                 {elem}
                             </Text>
@@ -46,46 +47,3 @@ export default function StoreProfile({ navigation, route }) {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        justifyContent: "center",
-        padding: 24,
-        backgroundColor: "#FFFFFF",
-        height: '100%',
-        fontSize: fontSizeConstant
-
-    },
-    imageContainer: {
-        padding: 10,
-        margin: 10,
-
-    },
-    btnView: {
-        margin: 10,
-        fontSize: fontSizeConstant
-
-    },
-    tinyLogo: {
-        height: 250,
-        width: '100%',
-        borderRadius: 20
-    },
-    listBox: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        width: "100%",
-        borderColor:'black',
-        borderWidth:0.5,
-        padding:4
-    },
-    listItem: {
-        padding: 2,
-        margin: 2,
-        fontSize:18,
-        opacity:0.5,
-
-    },
-});

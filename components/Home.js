@@ -1,54 +1,36 @@
-import { Text, View, StyleSheet, Image, Button } from "react-native";
-import { fontSizeConstant } from "./res/constants";
+import { Text,View, Pressable } from "react-native";
+import styles from '../res/styles'
+import { HomeInsightCard } from "./atoms";
+
+
 export default function Home({ navigation, route }) {
+  const { data } = route.params
+
+
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.tinyLogo}
-        source={require('../assets/illus.png')}
-      />
-      <View style={styles.btnView}>
-        <Button
-          title="New Order"
-          onPress={() => {
-            navigation.navigate("OrderForm", {});
-          }}
-        />
-      </View>
-      <View style={styles.btnView}>
-        <Button
-          title="View Previous Orders"
-          onPress={() => {
-            navigation.navigate("OrderList", {});
-          }}
-        />
-      </View>
-      <View style={styles.btnView}>
-        <Button title="Store Profile"  onPress={() => {
-            navigation.navigate("Profile", {});
-          }}
-        />
-      </View>
+      <Text style={styles.pageHead}>Hi, {data.Name}</Text>
+      <HomeInsightCard data={data.totalOrders} icon="shopping-bag" text="Orders"/>
+      <HomeInsightCard data={data.totalSales} icon="money" text="Sales"/>
+      <HomeInsightCard data={data.totalCustomers} icon="people" text="Customers"/>
+
+      <Pressable style={styles.pressable} onPress={() => {
+        navigation.navigate("OrderForm", {store:data});
+      }}>
+        <Text style={styles.pressText}>New Order</Text>
+      </Pressable>
+      <Pressable style={styles.pressable} onPress={() => {
+        navigation.navigate("OrderList", {operId:data.Id});
+      }}>
+        <Text style={styles.pressText}>View Orders</Text>
+      </Pressable>
+      <Pressable style={styles.pressable} onPress={() => {
+        navigation.navigate("Profile", {user:data});
+      }}>
+        <Text style={styles.pressText}>Store Profile</Text>
+      </Pressable>
+
+
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: "center",
-    padding: 24,
-    backgroundColor:"#FFFFFF",
-    height:'100%',
-    fontSize:fontSizeConstant
-
-  },
-  btnView: {
-    margin: 10,
-    fontSize:fontSizeConstant
-
-  },
-  tinyLogo:{
-    height:250,
-    width:'100%'
-  }
-});

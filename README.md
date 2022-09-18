@@ -40,8 +40,8 @@ Install Expo & Create-expo-app
 
 ```bash
   npm i expo create-expo-app
-  
 ```
+Clone Repo and move to Folder 
 
 ```bash
   git clone https://github.com/RamGoel/XiBiller.git

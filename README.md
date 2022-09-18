@@ -72,7 +72,7 @@ Run for Web
   w
 ```
 
-Run for Android 
+Run for Android (Download Expo Go App to Run on Android (Required))
 
 ```bash
   a

@@ -5,7 +5,7 @@ import { ScrollView, TextInput } from "react-native";
 import { fields } from '../res/data'
 import styles from "../res/styles";
 import { makeid } from "../res/constants";
-import { ref,db,onValue,set,dbF, saveLocal } from "./firebase";
+import { ref, db, onValue, set, dbF, saveLocal } from "./firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const OrderForm = ({ navigation, route }) => {
@@ -67,17 +67,20 @@ const OrderForm = ({ navigation, route }) => {
 
 
 
-  useEffect(async() => {
-    async function fetch
-    const productRef = ref(db, `Products/`)
-    onValue(productRef, (snap) => {
-      var data = snap.val()
-      setProducts(data)
-      if(await AsyncStorage.getItem('XiBillerProducts')!=data){
+  useEffect(() => {
+    function fetchProducts() {
 
-        saveLocal('XiBillerProducts',``)
-      }
-    })
+      const productRef = ref(db, `Products/`)
+      onValue(productRef, async (snap) => {
+        var data = snap.val()
+        setProducts(data)
+        if (await AsyncStorage.getItem('XiBillerProducts') != data) {
+
+          saveLocal('XiBillerProducts', ``)
+        }
+      })
+    }
+    fetchProducts()
   }, [''])
 
 
@@ -231,7 +234,7 @@ const OrderForm = ({ navigation, route }) => {
 
             if (passData["Delivery Mode"] == "Home Delivery") {
 
-              if (address.length>5) {
+              if (address.length > 5) {
 
                 const tempId = makeid(7)
                 set(ref(db, `Cart/${tempId}`), { ...passData, 'Delivery Address': address, cartId: "tempId" })
@@ -270,7 +273,7 @@ const OrderForm = ({ navigation, route }) => {
 
             if (passData["Delivery Mode"] == "Home Delivery") {
 
-              if (address.length>5) {
+              if (address.length > 5) {
 
                 //Continue Order
 

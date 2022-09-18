@@ -4,10 +4,8 @@ import { Dropdown } from "react-native-element-dropdown";
 import { ScrollView, TextInput } from "react-native";
 import { fields } from '../res/data'
 import styles from "../res/styles";
-import { miProducts } from "./firebase";
-import { makeid } from "../res/constants";
-import { ref, db, onValue, set, dbF, saveLocal, getProducts, setCart, miOrders } from "./firebase";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { miProducts, miOrders } from "./firebase";
+
 
 const OrderForm = ({ navigation, route }) => {
 
@@ -224,9 +222,9 @@ const OrderForm = ({ navigation, route }) => {
 
                   const prevUser = Object.values(miOrders).find((elem) => elem["Customer Contact Number"] == passData["Customer Contact Number"])
                   if (prevUser) {
-                    navigation.navigate("OrderConfirm", { data: { ...passData, commMode: prevUser.commMode, cname: prevUser.cname, cmail: prevUser.cmail } });
+                    navigation.navigate("OrderConfirm", { data: { ...passData, deliveryAddress: address, commMode: prevUser.commMode, cname: prevUser.cname, cmail: prevUser.cmail } });
                   } else {
-                    navigation.navigate("CustomerDetails", { data: passData });
+                    navigation.navigate("CustomerDetails", { data: { ...passData, deliveryAddress: address } });
 
                   }
                 } else {

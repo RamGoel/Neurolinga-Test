@@ -9,7 +9,7 @@ const StoreDataForm = ({ navigation, route }) => {
     const { user } = route.params
     const id = makeid(10)
     const [storeData, setData] = useState({
-        type:'',
+        type: '',
         email: user.mail,
         password: user.password,
         Id: id,
@@ -19,9 +19,9 @@ const StoreDataForm = ({ navigation, route }) => {
         State: "",
         Street: "",
         Phone: "",
-        totalCustomers:0,
-        totalOrders:0,
-        totalSales:0
+        totalCustomers: 0,
+        totalOrders: 0,
+        totalSales: 0
     })
 
     const fields = ["Name", "Owner", "Street", "State", "City"]
@@ -46,9 +46,9 @@ const StoreDataForm = ({ navigation, route }) => {
                 labelField="label"
                 valueField="value"
                 placeholder="Store Type"
-                value={type}
+                value={storeData.type}
                 onChange={(item) => {
-                    setData({...storeData,type:item.value})
+                    setData({ ...storeData, type: item.value })
                 }}
             />
             {
@@ -82,14 +82,14 @@ const StoreDataForm = ({ navigation, route }) => {
 
             <Pressable style={styles.pressable} onPress={() => {
 
-                
+
                 var flag = 0;
                 Object.keys(storeData).map((elem) => {
-                        if (storeData[`${elem}`] === "") {
-                            flag =  1;
-                            alert(elem)
-                        }
-                    
+                    if (storeData[`${elem}`] === "") {
+                        flag = 1;
+                        alert(elem)
+                    }
+
                 });
                 if (flag == 0) {
                     setStore(storeData)

@@ -6,10 +6,10 @@ import {
   View,
   Alert,
   ScrollView,
+  Platform
 } from "react-native";
 
-import AsyncStorage from
-  '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Dropdown } from "react-native-element-dropdown";
 import { Card } from "react-native-paper";
 import styles from "../res/styles";
@@ -36,7 +36,7 @@ const OrderConfirm = ({ navigation, route }) => {
   const orderData = [
     [
       { fieldName: "Name", fieldValue: data.cname },
-      { fieldName: "Address", fieldValue: data["Delivery Address"] },
+      { fieldName: "Address", fieldValue: data["Delivery Address"] || "In-Store Delivery" },
       { fieldName: "Contact", fieldValue: data["Customer Contact Number"] },
       { fieldName: "E-mail", fieldValue: data.cmail },
       { fieldName: "Product", fieldValue: data["Choose Product"] },
@@ -161,7 +161,7 @@ const OrderConfirm = ({ navigation, route }) => {
 
           var orderObj = {}
           if (tempVal.paymentMethod == "offline") {
-            if (amount) {
+            if (amount > 10) {
 
               orderObj = {
                 ...tempVal,
@@ -169,41 +169,99 @@ const OrderConfirm = ({ navigation, route }) => {
                 paidAmount: amount,
                 tDate: transactionDate
               }
+
+              setOrders(orderObj);
+
+              //Increasing Sales and Orders
+              increaseOrderCount(tempVal['Operator Id'], tempVal)
+
+              //Removing Order From Cart
+              if (tempVal.cartId) {
+                //Removing Order From Cart
+                setCart(tempVal.cartId, null)
+              }
+
+
+              alert("Order Completed")
+
+              const data = await AsyncStorage.getItem('XiBillerUser')
+              navigation.navigate('Home', { data: JSON.parse(data) })
             } else {
               alert("Fill Amount")
             }
           } else {
 
-            const transId = displayRazorpay()
-            if (transId) {
-              orderObj = {
-                ...tempVal,
-                orderId: orderIdFinal,
-                transactionId: transId,
-                tDate: transactionDate
+            function makePayment() {
+              const transId = makeid(8)
+              if (transId) {
+                orderObj = {
+                  ...tempVal,
+                  orderId: orderIdFinal,
+                  transactionId: transId,
+                  tDate: transactionDate
+                }
+              } else {
+                alert("Payment Failed")
+              }
+            }
+            if (Platform.OS == "web") {
+              if (window.confirm(`Confirm Payment of ${tempVal.totalPrice} ?`)) {
+                makePayment()
+                setOrders(orderObj);
+
+                //Increasing Sales and Orders
+                increaseOrderCount(tempVal['Operator Id'], tempVal)
+
+                //Removing Order From Cart
+                if (tempVal.cartId) {
+                  //Removing Order From Cart
+                  setCart(tempVal.cartId, null)
+                }
+
+
+                alert("Order Completed")
+
+                async function moveHome() {
+
+
+                  const data = await AsyncStorage.getItem('XiBillerUser')
+                  navigation.navigate('Home', { data: JSON.parse(data) })
+                }
+
+                moveHome()
               }
             } else {
-              alert("Payment Failed")
+              Alert.alert(
+                "",
+                `Confirm Payment of ${tempVal.totalPrice} ?`,
+                [{
+                  text: "Confirm", onPress: async () => {
+                    makePayment()
+                    setOrders(orderObj);
+
+                    //Increasing Sales and Orders
+                    increaseOrderCount(tempVal['Operator Id'], tempVal)
+
+                    //Removing Order From Cart
+                    if (tempVal.cartId) {
+                      //Removing Order From Cart
+                      setCart(tempVal.cartId, null)
+                    }
+
+
+                    alert("Order Completed")
+
+                    const data = await AsyncStorage.getItem('XiBillerUser')
+                    navigation.navigate('Home', { data: JSON.parse(data) })
+                  }
+                }, { text: "No" }], { cancelable: false })
             }
 
-          }
 
-          setOrders(orderObj);
 
-          //Increasing Sales and Orders
-          increaseOrderCount(tempVal['Operator Id'], tempVal)
-
-          //Removing Order From Cart
-          if (tempVal.cartId) {
-            //Removing Order From Cart
-            setCart(tempVal.cartId, null)
           }
 
 
-          alert("Order Completed")
-
-          const data = await AsyncStorage.getItem('XiBillerUser')
-          navigation.navigate('Home', { data: JSON.parse(data) })
 
         }
         else {

@@ -61,7 +61,7 @@ export default function App() {
             title: "Home", headerLeft: () => null, headerRight: () => (
               <View style={{ ...styles.listBox, justifyContent: 'flex-end' }}>
 
-                <Link to={{ screen: 'CartKaro', params: { id: 'jane' } }} style={{ marginRight: 5 }}>
+                <Link to={{ screen: 'Cart', params: { id: 'jane' } }} style={{ marginRight: 5 }}>
                   <Icon
                     name="shopping-cart"
                     color='#000'
@@ -126,5 +126,6 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
 
 

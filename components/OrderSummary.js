@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, TextInput, View,Pressable} from "react-native";
+import { StyleSheet, Text, TextInput, View, Pressable } from "react-native";
 import { Button, ScrollView } from "react-native";
 import * as Print from 'expo-print'
 import { Card } from "react-native-paper";
@@ -23,12 +23,12 @@ const OrderSummary = ({ navigation, route }) => {
       { fieldName: "Delivery", fieldValue: data.deliveryCharge },
       { fieldName: "Tax (18% GST)", fieldValue: data.taxPercent },
       { fieldName: "Transaction Id", fieldValue: data.transactionId || "Offline Payment" },
-      { fieldName: "Invoice Number", fieldValue: data.orderId},
+      { fieldName: "Invoice Number", fieldValue: data.orderId },
       { fieldName: "Transaction Date & Time", fieldValue: data.tDate || "Not Available" },
       { fieldName: "Payment Method", fieldValue: data.paymentMethod },
       { fieldName: "Total Amount", fieldValue: data.totalPrice },
       { fieldName: "paidAmount", fieldValue: data.paidAmount || "Product Amount" },
-      
+
     ],
     [
       { fieldName: "Name", fieldValue: data["Choose Product"] },
@@ -44,7 +44,7 @@ const OrderSummary = ({ navigation, route }) => {
     ],
   ];
 
-  const html=`
+  const html = `
   <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />
@@ -55,48 +55,44 @@ const OrderSummary = ({ navigation, route }) => {
     </h1>
     <table>
     
-    ${
-      orderData[0].map((elem) => {
-        return (
-          <tr style={styles.listBox} key={makeid(5)}>
-            <td style={styles.listItem}>{elem.fieldName}</td>
-            <td style={styles.listItem}>{elem.fieldValue}</td>
-          </tr>
-        );
-      })}    
-    ${
-      orderData[1].map((elem) => {
-        return (
-          <tr style={styles.listBox} key={makeid(5)}>
-            <td style={styles.listItem}>{elem.fieldName}</td>
-            <td style={styles.listItem}>{elem.fieldValue}</td>
-          </tr>
-        );
-      })}    
-    ${
-      orderData[2].map((elem) => {
-        return (
-          <tr style={styles.listBox} key={makeid(5)}>
-            <td style={styles.listItem}>{elem.fieldName}</td>
-            <td style={styles.listItem}>{elem.fieldValue}</td>
-          </tr>
-        );
-      })}    
+    ${orderData[0].map((elem) => {
+    return (
+      <tr style={styles.listBox} key={makeid(5)}>
+        <td style={styles.listItem}>{elem.fieldName}</td>
+        <td style={styles.listItem}>{elem.fieldValue}</td>
+      </tr>
+    );
+  })}    
+    ${orderData[1].map((elem) => {
+    return (
+      <tr style={styles.listBox} key={makeid(5)}>
+        <td style={styles.listItem}>{elem.fieldName}</td>
+        <td style={styles.listItem}>{elem.fieldValue}</td>
+      </tr>
+    );
+  })}    
+    ${orderData[2].map((elem) => {
+    return (
+      <tr style={styles.listBox} key={makeid(5)}>
+        <td style={styles.listItem}>{elem.fieldName}</td>
+        <td style={styles.listItem}>{elem.fieldValue}</td>
+      </tr>
+    );
+  })}    
     </table>
   </body>
 </html>`
 
   const printToFile = async () => {
-    const { uri } = await Print.printToFileAsync({
+    await Print.printToFileAsync({
       html
     });
-    console.log('File has been saved to:', uri);
-    await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' }).then(()=>navigation.navigate("orderList"))
+    console.log('File has been saved to:');
   }
 
   return (
     <ScrollView style={styles.formContainer}>
-      <Card style={{ padding: 10, marginVertical:10, border: "1px solid black" }}>
+      <Card style={{ padding: 10, marginVertical: 10, border: "1px solid black" }}>
         <Text style={styles.cardHead}>Customer Details</Text>
         {orderData[0].map((elem) => {
           return (
@@ -107,7 +103,7 @@ const OrderSummary = ({ navigation, route }) => {
           );
         })}
       </Card>
-      <Card style={{ padding: 10, marginVertical:10, border: "1px solid black" }}>
+      <Card style={{ padding: 10, marginVertical: 10, border: "1px solid black" }}>
         <Text style={styles.cardHead}>Product Details</Text>
         {orderData[2].map((elem) => {
           return (
@@ -118,7 +114,7 @@ const OrderSummary = ({ navigation, route }) => {
           );
         })}
       </Card>
-      <Card style={{ padding: 10, marginVertical:10, border: "1px solid black" }}>
+      <Card style={{ padding: 10, marginVertical: 10, border: "1px solid black" }}>
         <Text style={styles.cardHead}>Payment Details</Text>
         {orderData[1].map((elem) => {
           return (
@@ -130,8 +126,8 @@ const OrderSummary = ({ navigation, route }) => {
         })}
       </Card>
       <Pressable style={styles.pressable} onPress={printToFile}>
-            <Text style={styles.pressText}>Print Slip</Text>
-        </Pressable>
+        <Text style={styles.pressText}>Print Slip</Text>
+      </Pressable>
     </ScrollView>
   );
 };

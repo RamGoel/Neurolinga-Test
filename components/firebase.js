@@ -5,14 +5,14 @@ import {
     signInWithEmailAndPassword,
     onAuthStateChanged,
 } from 'firebase/auth';
-import { getDatabase, ref, onValue, set, push } from 'firebase/database';
+import { getDatabase, ref, onValue, set, push, onChildAdded, onChildChanged } from 'firebase/database';
 
 
 async function saveLocal(key, data) {
-    try {
+    if (window.navigator.onLine) {
         await AsyncStorage.setItem(key, JSON.stringify(data))
         return true;
-    } catch (e) {
+    } else {
         alert(JSON.stringify(e))
     }
 }
@@ -32,67 +32,86 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth();
+const productRef = ref(db, `Products/`)
+const orderRef = ref(db, 'Orders/')
+const cartRef = ref(db, 'Cart/')
 
 var miProducts = []
+var miOrders = {}
+var miCart = {}
 
-try {
-    const productRef = ref(db, `Products/`)
-    onValue(productRef, async (snap) => {
-        var data = snap.val()
-        await AsyncStorage.setItem('miProducts', JSON.stringify(data))
-        miProducts = data
-    })
-} catch (e) {
-    const data = AsyncStorage.getItem("miProducts")
-    miProducts = JSON.parse(data);
+
+
+onChildAdded(orderRef, (data) => {
+    miOrders[`${data.val().orderId}`] = data.val()
+})
+onChildAdded(cartRef, (data) => {
+    miCart[`${data.val().orderId}`] = data.val()
+})
+
+onChildChanged(ref(db, 'Stores/'), (data) => {
+    AsyncStorage.setItem('XiBillerUser', JSON.stringify(data.val()))
+})
+
+async function handleProducts() {
+
+    if (window.navigator.onLine) {
+        onValue(productRef, async (snap) => {
+            var data = snap.val()
+            await AsyncStorage.setItem('miProducts', JSON.stringify(data))
+            miProducts = data
+        })
+    } else {
+        alert("product catch")
+        const data = await AsyncStorage.getItem("miProducts")
+        miProducts = JSON.parse(data);
+    }
 }
+async function handleOrders() {
 
+    if (window.navigator.onLine) {
+        onValue(orderRef, async (snap) => {
+            if (snap.val()) {
+                await AsyncStorage.setItem('miOrders', JSON.stringify(snap.val()))
+                miOrders = snap.val()
 
-var miOrders = []
+            }
+        })
 
-try {
-    onValue(ref(db, 'Orders/'), async (snap) => {
-        if (snap.val()) {
-            await AsyncStorage.setItem('miOrders', JSON.stringify(snap.val()))
-            miOrders = snap.val()
-
-        }
-    })
-} catch (e) {
-    const data = AsyncStorage.getItem('miOrders')
-    miOrders = JSON.parse(data);
+    } else {
+        alert("order catch")
+        const data = await AsyncStorage.getItem('miOrders')
+        miOrders = JSON.parse(data);
+    }
 }
+// async function handleCart() {
 
+//     if (window.navigator.onLine) {
+//         onValue(cartRef, async (snap) => {
+//             if (snap.val()) {
+//                 await AsyncStorage.setItem('miCart', JSON.stringify(snap.val()))
+//                 miCart = snap.val()
 
+//             }
+//         })
+//     } else {
+//         alert("cart catch")
+//         const data = await AsyncStorage.getItem('miCart')
+//         miCart = JSON.parse(data);
+//     }
+// }
 
-var miCart = []
-
-try {
-    onValue(ref(db, 'Cart/'), async (snap) => {
-        if (snap.val()) {
-            await AsyncStorage.setItem('miCart', JSON.stringify(snap.val()))
-            miCart = snap.val()
-
-        }
-    })
-} catch (e) {
-    const data = AsyncStorage.getItem('miCart')
-    miCart = JSON.parse(data);
-}
-
+handleOrders()
+// handleCart()
+handleProducts()
 
 const setStore = (storeData) => {
-    try {
-        const pushRef = push(ref(db, `Stores/${storeData.Id}`))
-        set(pushRef, storeData)
-    } catch (e) {
-        console.log(e)
-    }
+    set(ref(db, `Stores/${storeData.Id}`), storeData)
 }
 
 const setOrders = (data) => {
     try {
-        const pushRef = push(ref(db, `Orders/${data.orderId}`))
+        const pushRef = push(ref(db, `Orders/`))
         set(pushRef, data)
     } catch (e) {
         console.log(e)
@@ -110,9 +129,8 @@ const increaseOrderCount = async (id, tempVal) => {
         storeObj.totalOrders = storeObj.totalOrders + 1
         storeObj.totalSales = Number(storeObj.totalSales) + Number(tempVal.totalPrice)
         storeObj.totalCustomers = storeObj.totalCustomers + 1
-        const pushRef = push(ref(db, `Orders/${id}`))
-        set(pushRef, storeObj)
-        AsyncStorage.setItem('miStore', storeObj)
+        set(ref(db, `Stores/${id}`), storeObj)
+        AsyncStorage.setItem('XiBillerUser', JSON.stringify(storeObj))
     })
 }
 

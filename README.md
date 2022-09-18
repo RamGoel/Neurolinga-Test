@@ -35,6 +35,14 @@ A React Native App that will ease the process of Order Billings across all the M
 
 Enter these lines in your terminal to clone app
 
+
+Install Expo & Create-expo-app
+
+```bash
+  npm i expo create-expo-app
+  
+```
+
 ```bash
   git clone https://github.com/RamGoel/XiBiller.git
   cd XiBiller
@@ -91,5 +99,9 @@ Build for Windows
 
 Click on Image to watch Application Demo
 
-[![video](https://assets.mspimages.in/wp-content/uploads/2018/09/Xiaomi-logo-696x435.jpg)](https://www.veed.io/embed/2d6c3210-3b17-4f53-8134-d94268e86a96)
+[![video](https://assets.mspimages.in/wp-content/uploads/2018/09/Xiaomi-logo-696x435.jpg)](https://www.youtube.com/watch?v=XOOCllNNG3Q)
+
+
+
+
 

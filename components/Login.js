@@ -61,7 +61,7 @@ export default function Login({ navigation, route }) {
     async function checkLocal() {
       if (await AsyncStorage.getItem('XiBillerUser') != null) {
         var obj = JSON.parse(await AsyncStorage.getItem('XiBillerUser'))
-        navigation.navigate('Home', { data: obj })
+        loginUser(obj.email, obj.password)
       } else {
         setLogin(true)
       }

@@ -5,7 +5,7 @@ import {
     signInWithEmailAndPassword,
     onAuthStateChanged,
 } from 'firebase/auth';
-import { getDatabase, ref, onValue, set } from 'firebase/database';
+import { getDatabase, ref, onValue, set, get } from 'firebase/database';
 import { getFirestore } from 'firebase/firestore';
 
 
@@ -57,4 +57,4 @@ const auth = getAuth();
 
 
 
-export {getLocal,saveLocal, ref, set, dbF, onAuthStateChanged, auth, db, onValue, signInWithEmailAndPassword }
+export { get, getLocal, saveLocal, ref, set, dbF, onAuthStateChanged, auth, db, onValue, signInWithEmailAndPassword }

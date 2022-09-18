@@ -22,12 +22,12 @@ export default function Login({ navigation, route }) {
   const loginUser = async (mail, pwd) => {
     if (mail != "" && pwd != "") {
       setSpinner(false)
-
+      alert(mail, pwd)
       signInWithEmailAndPassword(auth, mail, pwd)
         .then((user) => {
           onAuthStateChanged(auth, (user) => {
             const storeRef = ref(db, `Stores/`)
-            onValue(storeRef, async(snap) => {
+            onValue(storeRef, async (snap) => {
               var data = snap.val();
               data = Object.values(data).filter((elem) => elem.mail != mail)
               if (data) {
@@ -58,13 +58,15 @@ export default function Login({ navigation, route }) {
   };
 
   useEffect(() => {
-    async function checkLocal(){
-    if (await AsyncStorage.getItem('XiBillerUser') != null) {
-      var obj = JSON.parse(await AsyncStorage.getItem('XiBillerUser'))
-      navigation.navigate('Home', { data: obj })
-    }else{
-      setLogin(true)
-    }}
+    async function checkLocal() {
+      if (await AsyncStorage.getItem('XiBillerUser') != null) {
+        var obj = JSON.parse(await AsyncStorage.getItem('XiBillerUser'))
+        navigation.navigate('Home', { data: obj })
+      } else {
+        setLogin(true)
+      }
+    }
+
     checkLocal()
   }, [''])
 

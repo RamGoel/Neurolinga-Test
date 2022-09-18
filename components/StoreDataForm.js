@@ -3,7 +3,7 @@ import { Pressable, Text, View, TextInput, ScrollView } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { makeid } from "../res/constants";
 import styles from '../res/styles'
-import { saveLocal } from "./firebase";
+import { saveLocal, setStore } from "./firebase";
 const StoreDataForm = ({ navigation, route }) => {
 
     const { user } = route.params
@@ -86,13 +86,13 @@ const StoreDataForm = ({ navigation, route }) => {
                 var flag = 0;
                 Object.keys(storeData).map((elem) => {
                         if (storeData[`${elem}`] === "") {
-                            flag = 1;
+                            flag =  1;
                             alert(elem)
                         }
                     
                 });
                 if (flag == 0) {
-                    set(ref(db, `Stores/${storeData.Id}`), storeData);
+                    setStore(storeData)
                     navigation.navigate('Home', { data: storeData })
                 }
                 else alert("All Fields are Compulsory");

@@ -4,7 +4,7 @@ import { Card } from "react-native-paper";
 import styles from "../res/styles";
 import { SearchBar, Icon } from "react-native-elements";
 import { NoOrdersComponent, SpinnerComponent } from "./atoms";
-import { ref,db,onValue,set } from "./firebase";
+import { miOrders } from "./firebase";
 
 
 
@@ -17,16 +17,13 @@ const OrderConfirm = ({ navigation, route }) => {
 
   useEffect(() => {
 
-    var data=[]
-    onValue(ref(db,'Orders/'),(snap)=>{
-      if (snap.val()) {
-        data=snap.val()
-        const storeOrders = Object.values(data).filter((elem) => elem['Operator Id'] == operId)
-        setOrders(storeOrders);
-        setAllOrders(storeOrders);
-      }
-      setIsLoaded(true);
-    })
+    const k = Object.values(miOrders).filter((elem) => elem['Operator Id'] == operId)
+    setAllOrders(k)
+    setOrders(k)
+    setIsLoaded(true)
+
+
+
 
   }, [""]);
 

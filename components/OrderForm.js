@@ -4,15 +4,16 @@ import { Dropdown } from "react-native-element-dropdown";
 import { ScrollView, TextInput } from "react-native";
 import { fields } from '../res/data'
 import styles from "../res/styles";
+import { miProducts } from "./firebase";
 import { makeid } from "../res/constants";
-import { ref,db,onValue,set,dbF, saveLocal } from "./firebase";
+import { ref, db, onValue, set, dbF, saveLocal, getProducts, setCart, miOrders } from "./firebase";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const OrderForm = ({ navigation, route }) => {
 
   const { store } = route.params
   const [address, setAddress] = useState('')
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(miProducts);
   const [formData, setData] = useState([
     {
       "dropName": "Product Type",
@@ -64,23 +65,6 @@ const OrderForm = ({ navigation, route }) => {
     "Delivery Mode": "",
     "Customer Contact Number": "",
   });
-
-
-
-  useEffect(async() => {
-    async function fetch
-    const productRef = ref(db, `Products/`)
-    onValue(productRef, (snap) => {
-      var data = snap.val()
-      setProducts(data)
-      if(await AsyncStorage.getItem('XiBillerProducts')!=data){
-
-        saveLocal('XiBillerProducts',``)
-      }
-    })
-  }, [''])
-
-
 
   useEffect(() => {
     const filteredProducts = products.filter(
@@ -215,44 +199,6 @@ const OrderForm = ({ navigation, route }) => {
 
       <View style={{ flex: 1, flexDirection: 'row' }}>
 
-        <Pressable style={{ ...styles.pressable, flex: 1, marginRight: 5 }} onPress={() => {
-
-          //Checking if any field is empty
-          var flag = 0;
-          Object.keys(passData).map((elem) => {
-            if (passData[`${elem}`] == "") {
-              flag = 1;
-            }
-          });
-
-          if (flag == 0) {
-
-            //Add to Cart
-
-            if (passData["Delivery Mode"] == "Home Delivery") {
-
-              if (address.length>5) {
-
-                const tempId = makeid(7)
-                set(ref(db, `Cart/${tempId}`), { ...passData, 'Delivery Address': address, cartId: "tempId" })
-                alert("Added to Cart")
-              } else {
-                alert("Address Should Contain minimum 5 Characters")
-              }
-
-
-            } else {
-              const tempId = makeid(7)
-              set(ref(db, `Cart/${tempId}`), { ...passData, 'Delivery Address': address, cartId: "tempId" })
-              alert("Added to Cart")
-            }
-          }
-          else alert("All Fields are Compulsory");
-
-
-        }}>
-          <Text style={styles.pressText}>Add to Cart</Text>
-        </Pressable>
 
 
         <Pressable style={{ ...styles.pressable, flex: 1, marginLeft: 5 }} onPress={() => {
@@ -270,51 +216,15 @@ const OrderForm = ({ navigation, route }) => {
 
             if (passData["Delivery Mode"] == "Home Delivery") {
 
-              if (address.length>5) {
+              if (address.length > 5) {
 
                 //Continue Order
 
-                const OrdersRef = ref(db, "Orders/");
-                onValue(OrdersRef, (snapshot) => {
-                  const data = snapshot.val();
-                  console.log(data)
-                  if (data) {
+                if (miOrders) {
 
-                    const prevUser = Object.values(data).find((elem) => elem["Customer Contact Number"] == passData["Customer Contact Number"])
-                    console.warn(prevUser)
-                    if (prevUser) {
-                      setPassData({ ...passData, commMode: prevUser.commMode, cname: prevUser.cname, cmail: prevUser.cmail })
-                      navigation.navigate("OrderConfirm", { data: passData });
-                    } else {
-                      navigation.navigate("CustomerDetails", { data: passData });
-
-                    }
-                  } else {
-
-                    navigation.navigate("CustomerDetails", { data: passData });
-
-                  }
-                });
-
-              } else {
-                alert("Address Should Contain minimum 5 Characters")
-              }
-
-
-            } else {
-              //Continue Order
-
-              const OrdersRef = ref(db, "Orders/");
-              onValue(OrdersRef, (snapshot) => {
-                const data = snapshot.val();
-                console.log(data)
-                if (data) {
-
-                  const prevUser = Object.values(data).find((elem) => elem["Customer Contact Number"] == passData["Customer Contact Number"])
-                  console.warn(prevUser)
+                  const prevUser = Object.values(miOrders).find((elem) => elem["Customer Contact Number"] == passData["Customer Contact Number"])
                   if (prevUser) {
-                    setPassData({ ...passData, commMode: prevUser.commMode, cname: prevUser.cname, cmail: prevUser.cmail })
-                    navigation.navigate("OrderConfirm", { data: passData });
+                    navigation.navigate("OrderConfirm", { data: { ...passData, commMode: prevUser.commMode, cname: prevUser.cname, cmail: prevUser.cmail } });
                   } else {
                     navigation.navigate("CustomerDetails", { data: passData });
 
@@ -324,7 +234,32 @@ const OrderForm = ({ navigation, route }) => {
                   navigation.navigate("CustomerDetails", { data: passData });
 
                 }
-              });
+
+
+
+              } else {
+                alert("Address Should Contain minimum 5 Characters")
+              }
+
+
+            } else {
+              //Continue Order
+
+              if (miOrders) {
+
+                const prevUser = Object.values(miOrders).find((elem) => elem["Customer Contact Number"] == passData["Customer Contact Number"])
+                if (prevUser) {
+                  navigation.navigate("OrderConfirm", { data: { ...passData, commMode: prevUser.commMode, cname: prevUser.cname, cmail: prevUser.cmail } });
+                } else {
+                  navigation.navigate("CustomerDetails", { data: passData });
+
+                }
+              } else {
+
+                navigation.navigate("CustomerDetails", { data: passData });
+
+              }
+
 
             }
 

@@ -1,26 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { ScrollView, Text, Pressable, Alert } from "react-native";
+import { ScrollView, Text, Header, Pressable, Alert } from "react-native";
 import { Card } from "react-native-paper";
 import styles from "../res/styles";
 import { makeid } from "../res/constants";
 import { NoOrdersComponent, SpinnerComponent } from "./atoms";
-import { ref,db,onValue,set } from "./firebase";
+import { ref, db, onValue, set, miCart } from "./firebase";
+
 
 const Cart = ({ navigation, route }) => {
 
   const [orders, setOrders] = useState({});
   const [isLoaded, setIsLoaded] = useState(false);
   useEffect(() => {
+    setOrders(Object.values(miCart))
+    setIsLoaded(true);
 
-    var data = []
-    onValue(ref(db, 'Cart/'), (snap) => {
-      if (snap.val()) {
-        data = snap.val()
-        setOrders(data)
-        setIsLoaded(true)
-      }
-      setIsLoaded(true);
-    })
   }, [""]);
 
 
@@ -31,7 +25,7 @@ const Cart = ({ navigation, route }) => {
       {isLoaded ? (
 
         (orders.length) ?
-          Object.keys(orders).map((elem) => {
+          orders.map((elem) => {
             return (
               <Pressable
                 onPress={() => {
@@ -40,8 +34,8 @@ const Cart = ({ navigation, route }) => {
                     "Continue this Order?",
                     [{
                       text: "Yes", onPress: () => {
-                        navigation.navigate(`${orders[`${elem}`].screen}`, {
-                          data: orders[`${elem}`],
+                        navigation.navigate("CustomerDetails", {
+                          data: elem,
                         });
                       }
                     }, { text: "No" }], { cancelable: false })
@@ -58,7 +52,7 @@ const Cart = ({ navigation, route }) => {
                       onPress: () => {
                         setIsLoaded(false)
 
-                        set(ref(db, `Cart/${elem}`), null).then(() => {
+                        setCart(elem.cartId, null).then(() => {
 
                           setIsLoaded(true)
                         })
@@ -80,8 +74,8 @@ const Cart = ({ navigation, route }) => {
 
                 >
 
-                  <Text style={styles.cardHead}>{orders[`${elem}`]['Choose Product']}</Text>
-                  <Text>{orders[`${elem}`]['Product Type']}</Text>
+                  <Text style={styles.cardHead}>{elem['Choose Product']}</Text>
+                  <Text>{elem['Product Type']}</Text>
 
 
 
@@ -94,7 +88,7 @@ const Cart = ({ navigation, route }) => {
       ) : (
         <SpinnerComponent />
       )}
-    </ScrollView>
+    </ScrollView >
   );
 };
 

@@ -21,6 +21,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import com.razorpay.rn.RazorpayPackage;
 
+// import the package
+import com.christopherdro.htmltopdf.RNHTMLtoPDFPackage;
+
+// include package
+new MainReactPackage(),
+new RNHTMLtoPDFPackage()
+
 public class MainApplication extends Application implements ReactApplication {
   private final ReactNativeHost mReactNativeHost = new ReactNativeHostWrapper(
     this,
